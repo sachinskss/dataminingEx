@@ -1,0 +1,380 @@
+for i, t, j, g in X: G[i, j] = g  Is thaere a more intuitive way to write this
+
+Yes, you can make the code more intuitive by adding comments and using more descriptive variable names. Here's how you could rewrite it:
+
+```python
+# Loop over each row in the data array X
+for student_index, time_step, course_index, grade in X:
+    # Update the corresponding entry in the grading matrix G
+    G[student_index, course_index] = grade
+```
+
+In this version of the code, the variable names are more descriptive, which makes it easier to understand what each variable represents. The comment also helps explain what the code is doing.
+
+Why G[student_index, course_index] = grade explain
+
+The line `G[student_index, course_index] = grade` is updating the grading matrix `G` with the grade that a student received for a particular course.
+
+Here's a breakdown:
+
+- `G` is a 2D matrix where each row represents a student and each column represents a course.
+- `student_index` is the index of the student. It's used to select the specific row in the matrix `G` that corresponds to this student.
+- `course_index` is the index of the course. It's used to select the specific column in the matrix `G` that corresponds to this course.
+- `grade` is the grade that the student received for the course.
+
+So, `G[student_index, course_index] = grade` is storing the grade that the student (`student_index`) received for the course (`course_index`) in the grading matrix `G`.
+
+
+
+Task 05.06  Write a python function that takes a vector of grades as input and returns a copy of this vector where each zero entry is replaced with the collaborative filtering estimate of the grade according to the scheme above.  Use your function to print the estimated grades for two fictional students:  
+A student who has achieved an excellent grade in programming and good in technical CS as well as A&D but only passing in math and has not yet attempted any other course.
+A student who has achieved an excellent grade in math and A&D but only passing in technical CS and programming and has not yet attempted any other course.
+Which course would you recommend for these two students, respectively, given the grade estimates?
+
+To solve this task, we can follow these steps:
+
+1. Define a function that calculates the cosine similarity between two vectors.
+2. Define a function that takes a vector of grades as input and returns a copy of this vector where each zero entry is replaced with the collaborative filtering estimate of the grade according to the scheme above.
+3. Create vectors for the two fictional students and use the function to estimate their grades for the courses they haven't attempted yet.
+4. Recommend the course with the highest estimated grade for each student.
+
+Here is the Python code that implements these steps:
+
+```python
+import numpy as np
+
+# Function to calculate cosine similarity
+def cosine_similarity(a, b):
+    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+
+# Function to estimate grades
+def estimate_grades(student_grades, G):
+    estimated_grades = np.copy(student_grades)
+    for j in range(len(student_grades)):
+        if student_grades[j] == 0:
+            similarities = [cosine_similarity(student_grades, G[i]) for i in range(G.shape[0])]
+            estimated_grades[j] = np.dot(similarities, G[:, j]) / np.sum(similarities)
+    return estimated_grades
+
+# Create vectors for the two fictional students
+student1 = np.array([2, 1, 0, 1, -1, 0, 0, 0, 0])
+student2 = np.array([-1, 2, 1, -1, 0, 0, 0, 0, 0])
+
+# Estimate grades for the courses they haven't attempted yet
+estimated_grades1 = estimate_grades(student1, G)
+estimated_grades2 = estimate_grades(student2, G)
+
+# Print the estimated grades
+print("Estimated grades for student 1:", estimated_grades1)
+print("Estimated grades for student 2:", estimated_grades2)
+
+# Recommend the course with the highest estimated grade for each student
+recommended_course1 = np.argmax(estimated_grades1)
+recommended_course2 = np.argmax(estimated_grades2)
+
+print("Recommended course for student 1:", courses[recommended_course1])
+print("Recommended course for student 2:", courses[recommended_course2])
+```
+
+In this code, `G` is the grading matrix computed in Task 05.05, and `courses` is the list of course names. The vectors `student1` and `student2` represent the grades of the two fictional students for each course, where 0 means the course has not been attempted yet, -1 means passed with a not so good grade, 1 means passed with a good grade, and 2 means passed with an excellent grade. The function `estimate_grades` uses collaborative filtering to estimate the grades for the courses that haven't been attempted yet. The recommended course for each student is the one with the highest estimated grade.
+
+
+
+AI tools (Bing Chat) used for the code and partly for commenting
+Number of students and courses
+X[:, 0] selects all rows of the first column (index 0) from the 2D numpy array X. This column represents the student indices.
+np.max(X[:, 0]) finds the maximum value in this array, which corresponds to the highest student index and the plus 1, so we count the 0 as well.
+num_students = np.max(X[:, 0]) + 1 # or use len( np.unique(X.T[0]) ) num_courses = len(courses)  
+Initialize G
+G = np.zeros((num_students, num_courses))  
+Update G
+Loop over each row in the data array X
+for student_index, time_step, course_index, grade in X: # Update the corresponding entry in the grading matrix G # Here we have to use the final attempt of each student at each course, so we have to overwrite the previous attempts which happens automatically using this code. G[student_index, course_index] = grade  
+Print G
+print(G)  please label the output better in this code block
+
+
+Sure, we can add labels to the output to make it more understandable. Here's how you can modify the code:
+
+```python
+# AI tools (Bing Chat) used for the code and partly for commenting
+
+# Number of students and courses
+num_students = np.max(X[:, 0]) + 1  # or use len( np.unique(X.T[0]) )
+num_courses = len(courses)
+
+# Initialize G
+G = np.zeros((num_students, num_courses))
+
+# Update G
+# Loop over each row in the data array X
+for student_index, time_step, course_index, grade in X:
+    # Update the corresponding entry in the grading matrix G
+    G[student_index, course_index] = grade
+
+# Print G with labels
+print("Grading Matrix (G):")
+for i in range(num_students):
+    print(f"Student {i+1}: {G[i]}")
+```
+
+In this version of the code, we're printing each row of the grading matrix `G` along with a label that indicates the student number. This should make the output easier to understand.
+
+
+also what the coloums mean please
+
+
+
+The columns in the grading matrix `G` represent the courses. Each column corresponds to a specific course in the order they are listed in the `courses` list. The value in each cell of the matrix represents the grade a student received for a particular course. Here's how you could modify the code to print the grading matrix with both row and column labels:
+
+```python
+# Print G with labels
+print("Grading Matrix (G):")
+print("Courses: ", courses)
+for i in range(num_students):
+    print(f"Student {i+1}: {G[i]}")
+```
+
+In this version of the code, we're printing the list of courses at the top of the matrix, and each row of the grading matrix `G` along with a label that indicates the student number. This should make the output easier to understand.
+
+no empty space between the course list
+
+
+You can modify the print statement to remove the empty space between the course list by joining the course names with a comma. Here's how you can do it:
+
+```python
+# Print G with labels
+print("Grading Matrix (G):")
+print("Courses: ", ', '.join(courses))
+for i in range(num_students):
+    print(f"Student {i+1}:{G[i]}")
+```
+
+In this version of the code, we're using the `join` method to concatenate the course names with a comma and a space. This will print the course names without any additional space between them.
+
+
+
+Sure, I can add more comments to the code to explain it in detail.
+
+```python
+# Function to calculate cosine similarity
+def cosine_similarity(a, b):
+    # The cosine similarity is calculated as the dot product of a and b divided by the product of their norms.
+    # This gives a measure of how similar the two vectors are.
+    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+
+# Function to estimate grades
+def estimate_grades(student_grades, G):
+    # We start by making a copy of the student's grades. We will modify this copy with our estimates.
+    estimated_grades = np.copy(student_grades)
+    # We loop over each course (represented by the index j)
+    for j in range(len(student_grades)):
+        # If the student has not yet attempted the course (grade is 0)
+        if student_grades[j] == 0:
+            # We calculate the similarity between the student's grades and the grades of all other students for this course.
+            # This gives us a measure of how similar this student is to each other student in terms of their grades for this course.
+            similarities = [cosine_similarity(student_grades, G[i]) for i in range(G.shape[0])]
+            # We then estimate the student's grade for this course as a weighted average of the other students' grades,
+            # where the weights are the similarities we just calculated.
+            estimated_grades[j] = np.dot(similarities, G[:, j]) / np.sum(similarities)
+    # We return the estimated grades
+    return estimated_grades
+
+# Create vectors for the two fictional students
+# The numbers represent the grades for each course. 0 means the course has not been attempted yet.
+student1 = np.array([2, 1, 0, 1, -1, 0, 0, 0, 0])
+student2 = np.array([-1, 2, 1, -1, 0, 0, 0, 0, 0])
+
+# Estimate grades for the courses they haven't attempted yet
+# We use our function to estimate the grades for each student
+estimated_grades1 = estimate_grades(student1, G)
+estimated_grades2 = estimate_grades(student2, G)
+
+# Print the estimated grades
+print("Estimated grades for student 1:", estimated_grades1)
+print("Estimated grades for student 2:", estimated_grades2)
+
+# Recommend the course with the highest estimated grade for each student
+# We find the index of the course with the highest estimated grade, and use this index to look up the course name in the list of courses.
+recommended_course1 = np.argmax(estimated_grades1)
+recommended_course2 = np.argmax(estimated_grades2)
+
+print("Recommended course for student 1:", courses[recommended_course1])
+print("Recommended course for student 2:", courses[recommended_course2])
+```
+
+In this code, `G` is the grading matrix computed in Task 05.05, and `courses` is the list of course names. The vectors `student1` and `student2` represent the grades of the two fictional students for each course, where 0 means the course has not been attempted yet, -1 means passed with a not so good grade, 1 means passed with a good grade, and 2 means passed with an excellent grade. The function `estimate_grades` uses collaborative filtering to estimate the grades for the courses that haven't been attempted yet. The recommended course for each student is the one with the highest estimated grade.
+
+Task 05.07  Discuss whether collaborative filtering makes sense for this kind of data. In particular:
+Explain at least one advantage of collaborative filtering for this data set.
+Explain at least two problems of collaborative filtering for this data set.
+
+**Advantage:**
+
+1. Personalized Recommendations: Collaborative filtering can provide personalized course recommendations for each student based on their own grades and the grades of similar students. This can potentially lead to more relevant and useful recommendations compared to other methods that do not take individual student's grades into account.
+
+**Disadvantages:**
+
+1. Cold Start Problem: Collaborative filtering struggles with new students who have not yet attempted any courses. Since these students do not have any grades, it's hard to find similar students and make accurate recommendations.
+
+2. Sparsity: The grading matrix can be very sparse, especially if many students have not attempted many courses. This sparsity can make it difficult for collaborative filtering to find similar students and make accurate recommendations.
+
+3. Scalability: Collaborative filtering can be computationally expensive as it requires comparing a student to all other students to find similar ones. This can be a problem with a large number of students.
+
+
+
+To solve this task, we can follow these steps:
+
+1. Use the `np.linalg.svd` function to perform the singular value decomposition on the grade matrix `G`. This will return three matrices: `U_tilde`, `s`, and `V_tilde`.
+2. The `s` matrix is a 1-D array containing the singular values of `G`. We need to convert it into a diagonal matrix using the `np.diag` function.
+3. We then calculate `U` and `V` using the first `K` columns of `U_tilde` and `V_tilde` and the first `K` singular values.
+
+Here is the Python function that implements these steps:
+
+```python
+import numpy as np
+
+def matrix_factorization(G, K):
+    # Perform singular value decomposition
+    U_tilde, s, V_tilde = np.linalg.svd(G)
+
+    # Convert s into a diagonal matrix
+    S = np.diag(s)
+
+    # Calculate U and V
+    U = U_tilde[:, :K] @ np.sqrt(S[:K, :K])
+    V = np.sqrt(S[:K, :K]) @ V_tilde[:K, :]
+
+    return U, V
+```
+
+This function takes as input a grade matrix `G` and a number of latent components `K`, and returns the student representations `U` and the course representations `V`.
+
+
+
+To solve Task 05.09, we can follow these steps:
+
+1. Initialize an empty list to store the reconstruction errors.
+2. Loop over the number of latent dimensions `K` from 1 to 9.
+3. For each `K`, perform matrix factorization on the grading matrix `G` to get the student representations `U` and the course representations `V`.
+4. Compute the reconstruction error as the Frobenius norm of `G - U @ V`.
+5. Append the reconstruction error to the list.
+6. Plot the reconstruction errors against the number of latent dimensions.
+
+Here is the Python code that implements these steps:
+
+```python
+import matplotlib.pyplot as plt
+
+# Initialize an empty list to store the reconstruction errors
+errors = []
+
+# Loop over the number of latent dimensions K from 1 to 9
+for K in range(1, 10):
+    # Perform matrix factorization on the grading matrix G
+    U, V = matrix_factorization(G, K)
+    
+    # Compute the reconstruction error
+    error = np.linalg.norm(G - U @ V, 'fro')
+    
+    # Append the reconstruction error to the list
+    errors.append(error)
+
+# Plot the reconstruction errors against the number of latent dimensions
+plt.plot(range(1, 10), errors)
+plt.xlabel('Number of Latent Dimensions (K)')
+plt.ylabel('Reconstruction Error')
+plt.title('Reconstruction Error vs. Number of Latent Dimensions')
+plt.show()
+```
+
+This code will generate a plot with the number of latent dimensions `K` on the x-axis and the reconstruction error on the y-axis. The reconstruction error is computed as the Frobenius norm of the difference between the original grading matrix `G` and the product of the student and course representations `U` and `V`.
+
+To solve Task 05.10, we can follow these steps:
+
+1. Perform matrix factorization on the grading matrix `G` with `K=2` to get the student representations `U` and the course representations `V`.
+2. Create two scatter plots, one for `U` and one for `V`.
+3. For the scatter plot of `V`, label each point with the corresponding course name from the list of courses.
+
+Here is the Python code that implements these steps:
+
+```python
+import matplotlib.pyplot as plt
+
+# Perform matrix factorization with K=2
+U, V = matrix_factorization(G, 2)
+
+# Create a scatter plot for the student representations U
+plt.figure(figsize=(10, 5))
+plt.subplot(1, 2, 1)
+plt.scatter(U[:, 0], U[:, 1])
+plt.title('Student Representations (U)')
+plt.xlabel('Latent Factor 1')
+plt.ylabel('Latent Factor 2')
+
+# Create a scatter plot for the course representations V
+plt.subplot(1, 2, 2)
+plt.scatter(V[0, :], V[1, :])
+for i, course in enumerate(courses):
+    plt.annotate(course, (V[0, i], V[1, i]))
+plt.title('Course Representations (V)')
+plt.xlabel('Latent Factor 1')
+plt.ylabel('Latent Factor 2')
+
+plt.tight_layout()
+plt.show()
+```
+
+This code will generate two scatter plots. The first plot shows the student representations in the 2-dimensional latent space, and the second plot shows the course representations in the same space. Each point in the second plot is labeled with the corresponding course name.
+
+
+To solve Task 05.11, we can follow these steps:
+
+1. Make a copy of the original grading matrix `G`.
+2. Perform matrix factorization on the grading matrix `G` with `K=2` to get the student representations `U` and the course representations `V`.
+3. Compute the product `U @ V` to get the estimated grades.
+4. Replace the zero entries in the copy of `G` with the corresponding entries from the estimated grades.
+5. Plot the resulting grading matrix.
+
+Here is the Python code that implements these steps:
+
+```python
+import matplotlib.pyplot as plt
+
+# Make a copy of the original grading matrix G
+G_copy = np.copy(G)
+
+# Perform matrix factorization with K=2
+U, V = matrix_factorization(G, 2)
+
+# Compute the estimated grades
+estimated_grades = U @ V
+
+# Replace the zero entries in the copy of G with the corresponding entries from the estimated grades
+G_copy[G_copy == 0] = estimated_grades[G_copy == 0]
+
+# Plot the resulting grading matrix
+plt.imshow(G_copy, cmap='viridis')
+plt.colorbar(label='Grade')
+plt.title('Grading Matrix after Matrix Factorization')
+plt.xlabel('Course')
+plt.ylabel('Student')
+plt.show()
+```
+
+This code will generate a heatmap of the grading matrix after matrix factorization. The color of each cell in the heatmap corresponds to the grade of a student in a course. The grades that were originally zero (meaning the student has not yet attempted the course) are replaced with the estimated grades from the matrix factorization.
+
+
+**Advantage:**
+
+Matrix factorization can uncover latent features that explain the observed student grades. These latent features can represent underlying characteristics of the students and courses that are not explicitly provided in the data. For example, a latent feature might represent a student's affinity for theoretical subjects, or a course's difficulty level. This can provide a more nuanced understanding of the data and can improve the accuracy of the recommendations.
+
+**Disadvantages:**
+
+1. Cold Start Problem: Matrix factorization, like collaborative filtering, struggles with new students who have not yet attempted any courses. Since these students do not have any grades, it's hard to find similar students and make accurate recommendations.
+
+2. Overfitting: Matrix factorization can overfit to the observed data, especially if the number of latent features K is too large. This can lead to poor generalization performance on unseen data.
+
+3. Interpretability: While the latent features can improve the accuracy of the recommendations, they are not always easy to interpret. This can make it difficult to understand why a particular course was recommended.
+
+
